@@ -6,6 +6,7 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.common.exceptions import TimeoutException, NoAlertPresentException
+from decrypt import decrypt_to_secret
 
 # .env 파일에서 사용자 정보 가져오기
 from dotenv import load_dotenv
@@ -16,6 +17,11 @@ PASSWORD = os.getenv("PASSWORD")
 OTP_SECRET = os.getenv("OTP_SECRET")
 LOGIN_URL = os.getenv("LOGIN_URL")
 SHELL_URL = os.getenv("SHELL_URL")
+
+# OTP Secret 추출
+if OTP_SECRET.startswith("otpauth-migration://offline?data="):
+    OTP_SECRET = OTP_SECRET.replace("otpauth-migration://offline?data=", "")
+    OTP_SECRET = decrypt_to_secret(OTP_SECRET)
 
 # 환경 변수 검증
 if not all([USERNAME, PASSWORD, OTP_SECRET, LOGIN_URL, SHELL_URL]):
@@ -225,7 +231,7 @@ def login():
         return False
 
 def refresh_and_handle_alert():
-    """연장(새로고침) 버튼을 20초마다 누르고 JavaScript 확인 창을 자동으로 닫습니다."""
+    """연장(새로고침) 버튼을 누르고 JavaScript 확인 창을 자동으로 닫습니다."""
     while True:
         try:
             print("연장 버튼 클릭을 시도합니다...")
@@ -244,8 +250,8 @@ def refresh_and_handle_alert():
             alert.accept()
             print("확인 창을 자동으로 닫았습니다.")
 
-            print("20분 동안 대기합니다...")
-            time.sleep(20*60)  # 20분 대기
+            print("50분 동안 대기합니다...")
+            time.sleep(50*60)  # 50분 대기
 
         except TimeoutException:
             print("연장 버튼 또는 확인 창을 찾는 데 실패했습니다.")
@@ -265,7 +271,7 @@ def refresh_and_handle_alert():
 
 if __name__ == "__main__":
     if login():
-        print(f"로그인 성공. {SHELL_URL} 페이지의 20초 간격 자동 연장을 시작합니다.")
+        print(f"로그인 성공. {SHELL_URL} 페이지의 50분 간격 자동 연장을 시작합니다.")
         refresh_and_handle_alert()
     else:
         print("로그인에 실패하여 프로그램을 종료합니다.")
