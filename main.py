@@ -250,8 +250,8 @@ def refresh_and_handle_alert():
             alert.accept()
             print("확인 창을 자동으로 닫았습니다.")
 
-            print("50분 동안 대기합니다...")
-            time.sleep(50*60)  # 50분 대기
+            print("20분 동안 대기합니다...")
+            time.sleep(20*60)  # 20분 대기
 
         except TimeoutException:
             print("연장 버튼 또는 확인 창을 찾는 데 실패했습니다.")
@@ -271,7 +271,7 @@ def refresh_and_handle_alert():
 
 if __name__ == "__main__":
     if login():
-        print(f"로그인 성공. {SHELL_URL} 페이지의 50분 간격 자동 연장을 시작합니다.")
+        print(f"로그인 성공. {SHELL_URL} 페이지의 20분 간격 자동 연장을 시작합니다.")
         refresh_and_handle_alert()
     else:
         print("로그인에 실패하여 프로그램을 종료합니다.")
